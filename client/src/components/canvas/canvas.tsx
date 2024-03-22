@@ -26,16 +26,21 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
   });
 
   const getCursorCoordinates = (event: MouseEvent) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    console.log(rect);
+    if (!rect) return { x: 0, y: 0 };
     return {
-      x: event.clientX - 200,
-      y: event.clientY - 200,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
     };
   };
 
   const drawPath = (
     prevCoord: CursorCoordinates,
     nextCoord: CursorCoordinates,
-    send: boolean
+    send: boolean,
+    clientBrushColor?: string,
+    clientBrushSize?: number
   ) => {
     if (!canvasRef.current) {
       return;
@@ -45,9 +50,9 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
     const ctx = canvas.getContext('2d');
 
     if (ctx) {
-      ctx.strokeStyle = brushColor || 'black';
+      ctx.strokeStyle = clientBrushColor || brushColor;
       ctx.lineJoin = 'round';
-      ctx.lineWidth = brushSize || 2;
+      ctx.lineWidth = clientBrushSize || brushSize;
 
       ctx.beginPath();
       ctx.moveTo(prevCoord?.x, prevCoord.y);
@@ -62,6 +67,8 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
             prevCoord,
             nextCoord,
           },
+          clientBrushColor: brushColor,
+          clientBrushSize: brushSize,
         });
       }
     }
@@ -151,10 +158,17 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
   useEffect(() => {
     if (lastJsonMessage) {
       if (lastJsonMessage.type === WEBSOCKET_EVENTS.CANVAS_UPDATE) {
+        const { clientBrushColor, clientBrushSize } = lastJsonMessage;
         const { prevCoord, nextCoord } = lastJsonMessage.drawPath;
 
         console.log(`received canvas event`);
-        drawPath(prevCoord, nextCoord, false);
+        drawPath(
+          prevCoord,
+          nextCoord,
+          false,
+          clientBrushColor,
+          clientBrushSize
+        );
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,5 +183,5 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
     };
   }, []); */
 
-  return <canvas ref={canvasRef} className='h-full w-full bg-white'></canvas>;
+  return <canvas ref={canvasRef} className=' bg-white'></canvas>;
 };
