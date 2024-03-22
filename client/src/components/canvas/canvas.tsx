@@ -9,9 +9,11 @@ type CursorCoordinates = {
 
 interface CanvasProps {
   username: string;
+  brushColor: string;
+  brushSize: number;
 }
 
-export const Canvas = ({ username }: CanvasProps) => {
+export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPainting, setIsPainting] = useState(false);
   const [currentCursorCoord, setCurrentCursorCoord] = useState<
@@ -25,8 +27,8 @@ export const Canvas = ({ username }: CanvasProps) => {
 
   const getCursorCoordinates = (event: MouseEvent) => {
     return {
-      x: event.clientX - 32,
-      y: event.clientY - 32,
+      x: event.clientX - 200,
+      y: event.clientY - 200,
     };
   };
 
@@ -43,9 +45,9 @@ export const Canvas = ({ username }: CanvasProps) => {
     const ctx = canvas.getContext('2d');
 
     if (ctx) {
-      ctx.strokeStyle = 'black';
+      ctx.strokeStyle = brushColor || 'black';
       ctx.lineJoin = 'round';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = brushSize || 2;
 
       ctx.beginPath();
       ctx.moveTo(prevCoord?.x, prevCoord.y);
@@ -80,15 +82,34 @@ export const Canvas = ({ username }: CanvasProps) => {
   );
 
   const startPainting = useCallback((event: MouseEvent) => {
+    console.log(`started painting`);
     const currentCoordinates = getCursorCoordinates(event);
     setIsPainting(true);
     setCurrentCursorCoord(currentCoordinates);
   }, []);
 
   const stopPainting = useCallback(() => {
-    setIsPainting(false);
     console.log(`stopped painting`);
+    setIsPainting(false);
   }, []);
+
+  // const ASPECT_RATIO = 16 / 9;
+
+  /*   const resizeCanvas = () => {
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    canvas.width = containerWidth;
+    canvas.height = containerHeight;
+  }; */
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -139,12 +160,14 @@ export const Canvas = ({ username }: CanvasProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastJsonMessage]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className='bg-white'
-      width={500}
-      height={500}
-    ></canvas>
-  );
+  /*   useEffect(() => {
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []); */
+
+  return <canvas ref={canvasRef} className='h-full w-full bg-white'></canvas>;
 };
