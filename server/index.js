@@ -12,6 +12,7 @@ const connectedUsers = {};
 
 const EVENT_TYPES = {
   ALERT_EVENT: 'alert-event',
+  CANVAS_UPDATE: 'canvas-event',
 };
 
 server.listen(PORT, () => {
@@ -31,11 +32,34 @@ const broadcastUserDisconnection = (userId) => {
   });
 };
 
+const broadCastCanvasUpdates = (userId, message) => {
+  Object.keys(connections).forEach((uuid) => {
+    const connection = connections[uuid];
+    console.log(`uuid: ${uuid}`);
+    console.log(`userId: ${userId}`);
+    if (userId !== uuid) {
+      connection.send(JSON.stringify(message));
+    }
+  });
+};
+
 const onClose = (userId) => {
   console.log(`User ${connectedUsers[userId].username} has disconnected.`);
   broadcastUserDisconnection(userId);
   delete connections[userId];
   delete connectedUsers[userId];
+};
+
+const onMessage = (userId, message) => {
+  const convertedMessage = JSON.parse(message.toString());
+
+  switch (convertedMessage.type) {
+    case EVENT_TYPES.CANVAS_UPDATE:
+      broadCastCanvasUpdates(userId, convertedMessage);
+      break;
+    default:
+      console.log(`Unknown event type received.`);
+  }
 };
 
 ws.on('connection', (connection, request) => {
@@ -49,4 +73,5 @@ ws.on('connection', (connection, request) => {
   );
 
   connection.on('close', () => onClose(userId));
+  connection.on('message', (message) => onMessage(userId, message));
 });

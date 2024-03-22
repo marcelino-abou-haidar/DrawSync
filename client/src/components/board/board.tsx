@@ -2,24 +2,25 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import useWebSocket from 'react-use-websocket';
 import { Canvas } from 'src/components';
-import { SOCKET_URL } from 'src/utils/constants';
+import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
 
 interface BoardProps {
   username: string;
 }
 
 export const Board = ({ username }: BoardProps) => {
-  console.log(username);
-  const { sendJsonMessage, readyState, lastJsonMessage } = useWebSocket(
-    SOCKET_URL,
-    {
-      queryParams: { username },
-    }
-  );
+  const { lastJsonMessage } = useWebSocket(SOCKET_URL, {
+    queryParams: { username },
+    share: true,
+  });
 
   const handleEvents = (lastJsonMessage: any) => {
-    if (lastJsonMessage.type === 'alert-event') {
-      toast.error(lastJsonMessage.message);
+    switch (lastJsonMessage.type) {
+      case WEBSOCKET_EVENTS.ALERT_EVENT:
+        toast.error(lastJsonMessage.message);
+        break;
+      default:
+        break;
     }
   };
 
@@ -29,5 +30,5 @@ export const Board = ({ username }: BoardProps) => {
     }
   }, [lastJsonMessage]);
 
-  return <Canvas />;
+  return <Canvas username={username} />;
 };
