@@ -1,6 +1,6 @@
 export const Header = () => {
   return (
-    <h1 className='mb-4 text-center text-2xl font-bold md:mb-6 md:text-4xl lg:mb-8 lg:text-6xl'>
+    <h1 className='-py--space-m -text--step-4 text-center  font-bold text-white'>
       DrawSync
     </h1>
   );

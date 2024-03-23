@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { MutableRefObject, useCallback, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
@@ -7,11 +8,24 @@ type CursorCoordinates = {
   y: number;
 };
 
+type CanvasDraw = {
+  type: string;
+  data: {
+    drawPath: {
+      prevCoord: CursorCoordinates;
+      nextCoord: CursorCoordinates;
+    };
+    clientBrushColor: string;
+    clientBrushSize: number;
+  };
+};
+
 interface CanvasProps {
   username: string;
   brushColor: string;
   brushSize: number;
   canvasRef: MutableRefObject<HTMLCanvasElement | null>;
+  className?: string;
 }
 
 export const Canvas = ({
@@ -19,16 +33,20 @@ export const Canvas = ({
   brushColor,
   brushSize,
   canvasRef,
+  className,
 }: CanvasProps) => {
   const [isPainting, setIsPainting] = useState(false);
   const [currentCursorCoord, setCurrentCursorCoord] = useState<
     CursorCoordinates | undefined
   >(undefined);
 
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket(SOCKET_URL, {
-    queryParams: { username },
-    share: true,
-  });
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket<CanvasDraw>(
+    SOCKET_URL,
+    {
+      queryParams: { username },
+      share: true,
+    }
+  );
 
   const getCursorCoordinates = (event: MouseEvent) => {
     const rect = canvasRef.current?.getBoundingClientRect();
@@ -71,14 +89,15 @@ export const Canvas = ({
 
       if (send) {
         sendJsonMessage({
-          type: WEBSOCKET_EVENTS.CANVAS_UPDATE,
-          command: 'draw',
-          drawPath: {
-            prevCoord,
-            nextCoord,
+          type: WEBSOCKET_EVENTS.CANVAS_DRAW,
+          data: {
+            drawPath: {
+              prevCoord,
+              nextCoord,
+            },
+            clientBrushColor: brushColor,
+            clientBrushSize: brushSize,
           },
-          clientBrushColor: brushColor,
-          clientBrushSize: brushSize,
         });
       }
     }
@@ -102,6 +121,7 @@ export const Canvas = ({
     const currentCoordinates = getCursorCoordinates(event);
     setIsPainting(true);
     setCurrentCursorCoord(currentCoordinates);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopPainting = useCallback(() => {
@@ -133,6 +153,7 @@ export const Canvas = ({
     canvas.addEventListener('mousedown', startPainting);
 
     return () => canvas.removeEventListener('mousedown', startPainting);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startPainting]);
 
   useEffect(() => {
@@ -144,37 +165,40 @@ export const Canvas = ({
     canvas.addEventListener('mousemove', paint);
 
     return () => canvas.removeEventListener('mousemove', paint);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paint]);
 
   useEffect(() => {
     if (lastJsonMessage) {
-      if (lastJsonMessage.type === WEBSOCKET_EVENTS.CANVAS_UPDATE) {
-        switch (lastJsonMessage.command) {
-          case 'draw':
-            {
-              const { clientBrushColor, clientBrushSize } = lastJsonMessage;
-              const { prevCoord, nextCoord } = lastJsonMessage.drawPath;
+      switch (lastJsonMessage.type) {
+        case WEBSOCKET_EVENTS.CANVAS_DRAW:
+          {
+            const data = lastJsonMessage.data;
+            const { clientBrushColor, clientBrushSize } = data;
+            const { prevCoord, nextCoord } = data.drawPath;
 
-              drawPath(
-                prevCoord,
-                nextCoord,
-                false,
-                clientBrushColor,
-                clientBrushSize
-              );
-            }
-            break;
-          case 'erase': {
-            if (!canvasRef) {
-              break;
+            drawPath(
+              prevCoord,
+              nextCoord,
+              false,
+              clientBrushColor,
+              clientBrushSize
+            );
+          }
+          break;
+
+        case WEBSOCKET_EVENTS.CANVAS_CLEAR:
+          {
+            if (!canvasRef.current) {
+              return;
             }
 
             const canvas = canvasRef?.current;
             const ctx = canvas.getContext('2d');
             ctx?.clearRect(0, 0, canvas.width, canvas.height);
-            break;
           }
-        }
+          break;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -185,7 +209,10 @@ export const Canvas = ({
       ref={canvasRef}
       width={500}
       height={500}
-      className='aspect-auto h-full w-full shrink cursor-crosshair bg-white'
+      className={clsx(
+        'aspect-auto h-full w-full shrink cursor-crosshair bg-white',
+        className
+      )}
     ></canvas>
   );
 };

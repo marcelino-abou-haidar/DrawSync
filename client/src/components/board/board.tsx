@@ -23,6 +23,7 @@ export const Board = ({ username }: BoardProps) => {
     share: true,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEvents = (lastJsonMessage: any) => {
     switch (lastJsonMessage.type) {
       case WEBSOCKET_EVENTS.ALERT_EVENT:
@@ -42,7 +43,7 @@ export const Board = ({ username }: BoardProps) => {
     const ctx = canvas.getContext('2d');
     ctx?.clearRect(0, 0, canvas.width, canvas.height);
 
-    sendJsonMessage({ type: WEBSOCKET_EVENTS.CANVAS_UPDATE, command: 'erase' });
+    sendJsonMessage({ type: WEBSOCKET_EVENTS.CANVAS_CLEAR });
   };
 
   useEffect(() => {
@@ -54,13 +55,14 @@ export const Board = ({ username }: BoardProps) => {
   return (
     <Container>
       <Header />
-      <Container className='!mx-14 flex min-h-fit flex-col justify-center md:flex-row'>
-        <Users username={username} />
+      <Container className='-pb--space-xl !-mx--space-l flex min-h-fit flex-col justify-center md:flex-row'>
+        <Users username={username} className='order-3 md:order-1' />
         <Canvas
           username={username}
           brushColor={selectedColor}
           brushSize={selectedBrushSize}
           canvasRef={canvasRef}
+          className='order-1 md:order-2'
         />
         <CanvasConfig
           colors={COLORS}
@@ -69,6 +71,7 @@ export const Board = ({ username }: BoardProps) => {
           changeColor={setSelectedColor}
           changeBrushSize={setSelectedBrushSize}
           clearCanvas={clearCanvas}
+          className='order-2 md:order-3'
         />
       </Container>
     </Container>

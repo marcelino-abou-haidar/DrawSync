@@ -1,36 +1,68 @@
 import Avvvatars from 'avvvatars-react';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
 interface ActiveUsersProps {
   username: string;
+  className?: string;
 }
 
-export const Users = ({ username }: ActiveUsersProps) => {
-  const { lastJsonMessage } = useWebSocket(SOCKET_URL, {
+type User = {
+  [key: string]: {
+    username: string;
+    isDrawing: boolean;
+  };
+};
+
+type UsersListType = {
+  type: string;
+  data: User;
+};
+
+export const Users = ({ username, className }: ActiveUsersProps) => {
+  const [usersList, setUsersList] = useState<User>({});
+  const { lastJsonMessage } = useWebSocket<UsersListType>(SOCKET_URL, {
     queryParams: { username },
     share: true,
   });
 
+  useEffect(() => {
+    if (lastJsonMessage?.type === WEBSOCKET_EVENTS.USERS_LIST) {
+      setUsersList(lastJsonMessage.data);
+    }
+  }, [lastJsonMessage]);
+
   return (
-    <div className='min-w-32 rounded-l-lg bg-slate-500 p-4 lg:min-w-60 lg:max-w-80'>
-      <h2 className='mb-2 font-bold tracking-widest'>Connected users</h2>
-      <div className='flex gap-2 overflow-x-auto p-2'>
-        {lastJsonMessage?.type === WEBSOCKET_EVENTS.USER_EVENT
-          ? Object.keys(lastJsonMessage?.message.connectedUsers).map((uuid) => {
-              const { username } =
-                lastJsonMessage?.message?.connectedUsers[uuid];
+    <div
+      className={clsx(
+        ' -p--space-s min-w-[140] bg-gray-300 md:rounded-bl-lg md:rounded-tl-lg  lg:min-w-60 lg:max-w-80',
+        className
+      )}
+    >
+      <h2 className='-mb--space-3xs -text--step--1 font-bold tracking-widest'>
+        Connected users
+      </h2>
+      <div className='-p--space-2xs flex gap-4 overflow-x-auto md:flex-col'>
+        {Object.keys(usersList).length > 0
+          ? Object?.keys(usersList)?.map((uuid) => {
+              const { username } = usersList[uuid];
 
               return (
-                <div className='inline-block' key={uuid}>
-                  <Avvvatars
-                    border={true}
-                    borderColor='darkgray'
-                    value={username}
-                    radius={4}
+                <div className='flex items-center gap-2' key={uuid}>
+                  <div
                     data-tooltip-id='tooltip'
                     data-tooltip-content={username}
                     data-tooltip-place='top'
-                  />
+                  >
+                    <Avvvatars
+                      border={true}
+                      borderColor='darkgray'
+                      value={username}
+                    />
+                  </div>
+
+                  <p className='-text--step--2'>{username}</p>
                 </div>
               );
             })
