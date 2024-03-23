@@ -13,6 +13,7 @@ const connectedUsers = {};
 const EVENT_TYPES = {
   ALERT_EVENT: 'alert-event',
   CANVAS_UPDATE: 'canvas-event',
+  USER_EVENT: 'user-event',
 };
 
 server.listen(PORT, () => {
@@ -20,27 +21,33 @@ server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 
-const broadcastUserDisconnection = (userId) => {
-  const username = connectedUsers[userId].username;
-  Object.keys(connections).forEach((uuid) => {
+const broadcastMessage = (userId, message, all = false) => {
+  Object.keys(connections).map((uuid) => {
     const connection = connections[uuid];
-    const message = JSON.stringify({
-      type: EVENT_TYPES.ALERT_EVENT,
-      message: `User ${username} has disconnected.`,
-    });
-    connection.send(message);
+
+    if (!all && uuid !== userId) {
+      connection.send(message);
+    } else if (all) {
+      connection.send(message);
+    }
   });
 };
 
-const broadCastCanvasUpdates = (userId, message) => {
-  Object.keys(connections).forEach((uuid) => {
-    const connection = connections[uuid];
-    console.log(`uuid: ${uuid}`);
-    console.log(`userId: ${userId}`);
-    if (userId !== uuid) {
-      connection.send(JSON.stringify(message));
-    }
+const broadcastUserDisconnection = (userId) => {
+  const username = connectedUsers[userId].username;
+  const message = JSON.stringify({
+    type: EVENT_TYPES.ALERT_EVENT,
+    message: {
+      alert: `User ${username} has disconnected.`,
+    },
   });
+
+  broadcastMessage(userId, message);
+};
+
+const broadCastCanvasUpdates = (userId, message) => {
+  const jsonMessage = JSON.stringify(message);
+  broadcastMessage(userId, jsonMessage);
 };
 
 const onClose = (userId) => {

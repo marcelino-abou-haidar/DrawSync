@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
 
@@ -11,10 +11,15 @@ interface CanvasProps {
   username: string;
   brushColor: string;
   brushSize: number;
+  canvasRef: MutableRefObject<HTMLCanvasElement | null>;
 }
 
-export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export const Canvas = ({
+  username,
+  brushColor,
+  brushSize,
+  canvasRef,
+}: CanvasProps) => {
   const [isPainting, setIsPainting] = useState(false);
   const [currentCursorCoord, setCurrentCursorCoord] = useState<
     CursorCoordinates | undefined
@@ -27,11 +32,15 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
 
   const getCursorCoordinates = (event: MouseEvent) => {
     const rect = canvasRef.current?.getBoundingClientRect();
-    console.log(rect);
-    if (!rect) return { x: 0, y: 0 };
+
+    if (!rect || !canvasRef.current) return { x: 0, y: 0 };
+
+    const scaleX = canvasRef.current?.width / rect?.width;
+    const scaleY = canvasRef.current?.height / rect?.height;
+
     return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
     };
   };
 
@@ -63,6 +72,7 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
       if (send) {
         sendJsonMessage({
           type: WEBSOCKET_EVENTS.CANVAS_UPDATE,
+          command: 'draw',
           drawPath: {
             prevCoord,
             nextCoord,
@@ -89,34 +99,14 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
   );
 
   const startPainting = useCallback((event: MouseEvent) => {
-    console.log(`started painting`);
     const currentCoordinates = getCursorCoordinates(event);
     setIsPainting(true);
     setCurrentCursorCoord(currentCoordinates);
   }, []);
 
   const stopPainting = useCallback(() => {
-    console.log(`stopped painting`);
     setIsPainting(false);
   }, []);
-
-  // const ASPECT_RATIO = 16 / 9;
-
-  /*   const resizeCanvas = () => {
-    if (!canvasRef.current) {
-      return;
-    }
-
-    const canvas = canvasRef.current;
-    const container = canvas.parentElement;
-    if (!container) return;
-
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    canvas.width = containerWidth;
-    canvas.height = containerHeight;
-  }; */
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -131,6 +121,7 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
       canvas.removeEventListener('mouseup', stopPainting);
       canvas.removeEventListener('mouseleave', stopPainting);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stopPainting]);
 
   useEffect(() => {
@@ -158,30 +149,43 @@ export const Canvas = ({ username, brushColor, brushSize }: CanvasProps) => {
   useEffect(() => {
     if (lastJsonMessage) {
       if (lastJsonMessage.type === WEBSOCKET_EVENTS.CANVAS_UPDATE) {
-        const { clientBrushColor, clientBrushSize } = lastJsonMessage;
-        const { prevCoord, nextCoord } = lastJsonMessage.drawPath;
+        switch (lastJsonMessage.command) {
+          case 'draw':
+            {
+              const { clientBrushColor, clientBrushSize } = lastJsonMessage;
+              const { prevCoord, nextCoord } = lastJsonMessage.drawPath;
 
-        console.log(`received canvas event`);
-        drawPath(
-          prevCoord,
-          nextCoord,
-          false,
-          clientBrushColor,
-          clientBrushSize
-        );
+              drawPath(
+                prevCoord,
+                nextCoord,
+                false,
+                clientBrushColor,
+                clientBrushSize
+              );
+            }
+            break;
+          case 'erase': {
+            if (!canvasRef) {
+              break;
+            }
+
+            const canvas = canvasRef?.current;
+            const ctx = canvas.getContext('2d');
+            ctx?.clearRect(0, 0, canvas.width, canvas.height);
+            break;
+          }
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastJsonMessage]);
 
-  /*   useEffect(() => {
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-    };
-  }, []); */
-
-  return <canvas ref={canvasRef} className=' bg-white'></canvas>;
+  return (
+    <canvas
+      ref={canvasRef}
+      width={500}
+      height={500}
+      className='aspect-auto h-full w-full shrink cursor-crosshair bg-white'
+    ></canvas>
+  );
 };

@@ -22,7 +22,7 @@ export const Login = ({ setUsername }: LoginProps) => {
   };
 
   return (
-    <div className='flex h-full flex-col items-center justify-center'>
+    <div className='flex min-h-screen flex-col items-center justify-center'>
       <h2 className='mb-4 text-3xl font-bold'>Welcome back!</h2>
       <div className='flex flex-col rounded bg-white p-6 text-black'>
         <h3 className='mb-2 text-xl font-semibold'>Join board</h3>

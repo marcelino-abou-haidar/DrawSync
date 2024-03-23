@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import useWebSocket from 'react-use-websocket';
-import { Canvas, CanvasConfig, Header, Users } from 'src/components';
+import { Canvas, CanvasConfig, Container, Header, Users } from 'src/components';
 import {
   BRUSH_SIZES,
   COLORS,
@@ -14,10 +14,11 @@ interface BoardProps {
 }
 
 export const Board = ({ username }: BoardProps) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [selectedColor, setSelectedColor] = useState('black');
   const [selectedBrushSize, setSelectedBrushSize] = useState(1);
 
-  const { lastJsonMessage } = useWebSocket(SOCKET_URL, {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(SOCKET_URL, {
     queryParams: { username },
     share: true,
   });
@@ -25,11 +26,23 @@ export const Board = ({ username }: BoardProps) => {
   const handleEvents = (lastJsonMessage: any) => {
     switch (lastJsonMessage.type) {
       case WEBSOCKET_EVENTS.ALERT_EVENT:
-        toast.error(lastJsonMessage.message);
+        toast.error(lastJsonMessage.message.alert);
         break;
       default:
         break;
     }
+  };
+
+  const clearCanvas = () => {
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const canvas = canvasRef?.current;
+    const ctx = canvas.getContext('2d');
+    ctx?.clearRect(0, 0, canvas.width, canvas.height);
+
+    sendJsonMessage({ type: WEBSOCKET_EVENTS.CANVAS_UPDATE, command: 'erase' });
   };
 
   useEffect(() => {
@@ -39,14 +52,15 @@ export const Board = ({ username }: BoardProps) => {
   }, [lastJsonMessage]);
 
   return (
-    <div className='flex min-h-full flex-col items-center'>
+    <Container>
       <Header />
-      <div className='h-full w-full max-w-4xl'>
-        <Users lastJsonMessage={{}} />
+      <Container className='!mx-14 flex min-h-fit flex-col justify-center md:flex-row'>
+        <Users username={username} />
         <Canvas
           username={username}
           brushColor={selectedColor}
           brushSize={selectedBrushSize}
+          canvasRef={canvasRef}
         />
         <CanvasConfig
           colors={COLORS}
@@ -54,8 +68,9 @@ export const Board = ({ username }: BoardProps) => {
           selectedColor={selectedColor}
           changeColor={setSelectedColor}
           changeBrushSize={setSelectedBrushSize}
+          clearCanvas={clearCanvas}
         />
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 };

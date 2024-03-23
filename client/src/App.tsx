@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { Board, Login } from 'src/components';
+import { Board, Container, Login } from 'src/components';
 
 function App() {
-  const [username, setUsername] = useState('marcelino');
+  const [username, setUsername] = useState('');
 
   return (
-    <div className='bg-puzzles-pattern h-full bg-slate-700 p-8 text-white'>
-      {username ? (
-        <Board username={username} />
-      ) : (
-        <Login setUsername={setUsername} />
-      )}
+    <div className='min-h-full bg-slate-700 bg-puzzles-pattern text-white'>
+      <Container>
+        {username ? (
+          <Board username={username} />
+        ) : (
+          <Login setUsername={setUsername} />
+        )}
+      </Container>
     </div>
   );
 }
