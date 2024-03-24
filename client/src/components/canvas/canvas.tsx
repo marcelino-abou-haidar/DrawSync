@@ -128,8 +128,7 @@ export const Canvas = ({
       const mouseX = event.clientX;
 
       const cursorPointer = customCursor.current as HTMLElement;
-      cursorPointer.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-      cursorPointer.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      cursorPointer.style.transform = `translate3d(${mouseX - brushSize / 2}px, ${mouseY - brushSize / 2}px, 0)`;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isPainting, currentCursorCoord]
@@ -152,17 +151,16 @@ export const Canvas = ({
     }
 
     const cursorPointer = customCursor.current as HTMLElement;
-    document.body.style.cursor = 'none';
+    cursorPointer.style.top = `0`;
+    cursorPointer.style.left = `0`;
     cursorPointer.style.display = 'block';
-    cursorPointer.style.height = `${size}px`;
-    cursorPointer.style.width = `${size}px`;
+    document.body.style.cursor = 'none';
+    cursorPointer.style.width = `${size + 2}px`;
+    cursorPointer.style.height = `${size + 2}px`;
     cursorPointer.style.position = `absolute`;
     cursorPointer.style.pointerEvents = `none`;
-    cursorPointer.style.left = `0`;
-    cursorPointer.style.top = `0`;
-    cursorPointer.style.borderRadius = `50%`;
-    cursorPointer.style.transform = `translate(-50%, -50%)`;
     cursorPointer.style.backgroundColor = color;
+    cursorPointer.style.borderRadius = `50%`;
   }, []);
 
   const onMouseLeave = () => {
