@@ -39,7 +39,7 @@ export const CanvasConfig = ({
   return (
     <div
       className={clsx(
-        '-p--space-s w-full min-w-32 overflow-auto bg-gray-300 md:max-w-80 md:rounded-r-lg lg:min-w-60',
+        'w-full min-w-32 overflow-auto rounded-t-lg bg-gray-300 -p--space-s md:max-w-80 md:rounded-r-lg md:rounded-tl-none lg:min-w-60',
         className
       )}
     >
@@ -72,7 +72,7 @@ export const CanvasConfig = ({
             onChange={onBrushSizeChange}
             name='brush-size'
             id='brush-size'
-            className='-p--space-3xs w-full max-w-36 rounded text-black'
+            className='w-full max-w-36 rounded -p--space-3xs text-black'
           >
             {brushSizes?.length > 0
               ? brushSizes?.map((brushSize, index) => (
@@ -84,7 +84,7 @@ export const CanvasConfig = ({
           </select>
         </div>
         <div className='flex flex-col justify-end'>
-          <h3 className=' -text--step--1 -mb--space-3xs font-semibold'>
+          <h3 className=' -mb--space-3xs -text--step--1 font-semibold'>
             Actions
           </h3>
           <button

@@ -36,14 +36,14 @@ export const Users = ({ username, className }: ActiveUsersProps) => {
   return (
     <div
       className={clsx(
-        ' -p--space-s min-w-[140] bg-gray-300 md:rounded-bl-lg md:rounded-tl-lg  lg:min-w-60 lg:max-w-80',
+        ' min-w-[140] rounded-b-lg bg-gray-300 -p--space-s md:rounded-bl-lg md:rounded-br-none  md:rounded-tl-lg lg:min-w-60 lg:max-w-80',
         className
       )}
     >
       <h2 className='-mb--space-3xs -text--step--1 font-bold tracking-widest'>
         Connected users
       </h2>
-      <div className='-p--space-2xs flex gap-4 overflow-x-auto md:flex-col'>
+      <div className='flex gap-4 overflow-x-auto -py--space-2xs md:flex-col'>
         {Object.keys(usersList).length > 0
           ? Object?.keys(usersList)?.map((uuid) => {
               const { username } = usersList[uuid];

@@ -55,14 +55,14 @@ export const Board = ({ username }: BoardProps) => {
   return (
     <Container>
       <Header />
-      <Container className='-pb--space-xl !-mx--space-l flex min-h-fit flex-col justify-center md:flex-row'>
+      <Container className='!-mx--space-l flex min-h-fit flex-col justify-center -pb--space-xl md:flex-row'>
         <Users username={username} className='order-3 md:order-1' />
         <Canvas
           username={username}
           brushColor={selectedColor}
           brushSize={selectedBrushSize}
           canvasRef={canvasRef}
-          className='order-1 md:order-2'
+          className='order-2'
         />
         <CanvasConfig
           colors={COLORS}
@@ -71,7 +71,7 @@ export const Board = ({ username }: BoardProps) => {
           changeColor={setSelectedColor}
           changeBrushSize={setSelectedBrushSize}
           clearCanvas={clearCanvas}
-          className='order-2 md:order-3'
+          className='order-1 md:order-3'
         />
       </Container>
     </Container>
