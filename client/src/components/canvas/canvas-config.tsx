@@ -45,10 +45,8 @@ export const CanvasConfig = ({
     >
       <div className='flex w-full flex-wrap gap-6 md:flex-col'>
         <div className='-mb--space-3xs '>
-          <h3 className='-mb--space-3xs -text--step--1 font-semibold'>
-            Colors
-          </h3>
-          <div className='flex max-h-56 flex-wrap gap-2 md:overflow-x-auto'>
+          <h3 className='-text--step--1 font-semibold'>Colors</h3>
+          <div className=' flex max-h-56 flex-wrap gap-2 -py--space-3xs md:overflow-x-auto'>
             {colors?.length > 0
               ? colors?.map((color, index) => (
                   <div

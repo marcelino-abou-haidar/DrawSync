@@ -29,7 +29,9 @@ export const Login = ({ setUsername }: LoginProps) => {
 
   return (
     <div className='flex min-h-screen flex-col items-center justify-center text-white'>
-      <h2 className='-mb--space-xs -text--step-1 font-bold'>Welcome back!</h2>
+      <h2 className='font-gluten -mb--space-xs -text--step-1 font-bold'>
+        Welcome back!
+      </h2>
       <div className='flex flex-col rounded-lg bg-white -px--space-m -py--space-s text-black'>
         <h3 className=' -mb--space-3xs -text--step-0 font-semibold'>
           Join board

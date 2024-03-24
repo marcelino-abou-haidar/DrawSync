@@ -5,7 +5,7 @@ function App() {
   const [username, setUsername] = useState('');
 
   return (
-    <div className='min-h-full bg-slate-700 bg-puzzles-pattern'>
+    <div className='font-roboto-mono min-h-full bg-slate-700 bg-puzzles-pattern'>
       <Container>
         {username ? (
           <Board username={username} />

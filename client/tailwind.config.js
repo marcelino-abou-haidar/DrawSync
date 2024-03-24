@@ -3,6 +3,10 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        'roboto-mono': `"Roboto Mono", monospace`,
+        gluten: `"Gluten", cursive;`,
+      },
       fontSize: {
         '--step--2': 'clamp(0.7813rem, 0.7469rem + 0.1717vi, 0.88rem)',
         '--step--1': 'clamp(0.9375rem, 0.881rem + 0.2826vi, 1.1rem)',
