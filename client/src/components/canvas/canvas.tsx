@@ -124,8 +124,8 @@ export const Canvas = ({
         return;
       }
 
-      const mouseY = event.clientY;
-      const mouseX = event.clientX;
+      const mouseY = event.pageY;
+      const mouseX = event.pageX;
 
       const cursorPointer = customCursor.current as HTMLElement;
       cursorPointer.style.transform = `translate3d(${mouseX - brushSize / 2}px, ${mouseY - brushSize / 2}px, 0)`;
