@@ -1,5 +1,11 @@
 import clsx from 'clsx';
-import { MutableRefObject, useCallback, useEffect, useState } from 'react';
+import {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import useWebSocket from 'react-use-websocket';
 import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
 
@@ -36,6 +42,7 @@ export const Canvas = ({
   className,
 }: CanvasProps) => {
   const [isPainting, setIsPainting] = useState(false);
+  const customCursor = useRef(null);
   const [currentCursorCoord, setCurrentCursorCoord] = useState<
     CursorCoordinates | undefined
   >(undefined);
@@ -112,6 +119,17 @@ export const Canvas = ({
           setCurrentCursorCoord(newCursorCoordinates);
         }
       }
+
+      if (!customCursor.current) {
+        return;
+      }
+
+      const mouseY = event.clientY;
+      const mouseX = event.clientX;
+
+      const cursorPointer = customCursor.current as HTMLElement;
+      cursorPointer.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      cursorPointer.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isPainting, currentCursorCoord]
@@ -127,6 +145,36 @@ export const Canvas = ({
   const stopPainting = useCallback(() => {
     setIsPainting(false);
   }, []);
+
+  const onMouseEnter = useCallback((size: number, color: string) => {
+    if (!customCursor.current) {
+      return;
+    }
+
+    const cursorPointer = customCursor.current as HTMLElement;
+    document.body.style.cursor = 'none';
+    cursorPointer.style.display = 'block';
+    cursorPointer.style.height = `${size}px`;
+    cursorPointer.style.width = `${size}px`;
+    cursorPointer.style.position = `absolute`;
+    cursorPointer.style.pointerEvents = `none`;
+    cursorPointer.style.left = `0`;
+    cursorPointer.style.top = `0`;
+    cursorPointer.style.borderRadius = `50%`;
+    cursorPointer.style.transform = `translate(-50%, -50%)`;
+    cursorPointer.style.backgroundColor = color;
+  }, []);
+
+  const onMouseLeave = () => {
+    document.body.style.cursor = 'default';
+
+    if (!customCursor.current) {
+      return;
+    }
+
+    const cursorPointer = customCursor.current as HTMLElement;
+    cursorPointer.style.display = `none`;
+  };
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -170,6 +218,25 @@ export const Canvas = ({
   }, [paint]);
 
   useEffect(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+
+    const canvas = canvasRef.current;
+    canvas.addEventListener('mouseenter', () => {
+      onMouseEnter(brushSize, brushColor);
+    });
+    canvas.addEventListener('mouseleave', onMouseLeave);
+
+    return () => {
+      canvas.removeEventListener('mouseenter', () => {
+        onMouseEnter(brushSize, brushColor);
+      });
+      canvas.removeEventListener('mouseleave', onMouseLeave);
+    };
+  }, [brushColor, brushSize, canvasRef, onMouseEnter]);
+
+  useEffect(() => {
     if (lastJsonMessage) {
       switch (lastJsonMessage.type) {
         case WEBSOCKET_EVENTS.CANVAS_DRAW:
@@ -205,14 +272,14 @@ export const Canvas = ({
   }, [lastJsonMessage]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={500}
-      height={500}
-      className={clsx(
-        'aspect-auto h-full w-full shrink cursor-crosshair bg-white',
-        className
-      )}
-    ></canvas>
+    <>
+      <div ref={customCursor}></div>
+      <canvas
+        ref={canvasRef}
+        width={500}
+        height={500}
+        className={clsx('aspect-auto h-full w-full shrink bg-white', className)}
+      ></canvas>
+    </>
   );
 };
