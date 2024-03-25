@@ -50,7 +50,6 @@ export const Canvas = ({
   const { sendJsonMessage, lastJsonMessage } = useWebSocket<CanvasDraw>(
     SOCKET_URL,
     {
-      queryParams: { username },
       share: true,
     }
   );

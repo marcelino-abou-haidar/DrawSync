@@ -1,6 +1,10 @@
 export const SOCKET_URL = `${import.meta.env.VITE_BACKEND_SERVER_DOMAIN}:${import.meta.env.VITE_BACKEND_SERVER_PORT}`;
 
 export const WEBSOCKET_EVENTS = {
+  ROOM_JOIN: 'join-room',
+  ROOM_JOINED: 'joined-room',
+  ROOM_CREATE: 'create-room',
+  ROOM_CREATED: 'room-created',
   ALERT_EVENT: 'alert-event',
   CANVAS_DRAW: 'canvas-draw',
   CANVAS_CLEAR: 'canvas-clear',

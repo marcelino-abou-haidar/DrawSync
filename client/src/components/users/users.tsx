@@ -22,10 +22,9 @@ type UsersListType = {
   data: User;
 };
 
-export const Users = ({ username, className }: ActiveUsersProps) => {
+export const Users = ({ className }: ActiveUsersProps) => {
   const [usersList, setUsersList] = useState<User>({});
   const { lastJsonMessage } = useWebSocket<UsersListType>(SOCKET_URL, {
-    queryParams: { username },
     share: true,
   });
 

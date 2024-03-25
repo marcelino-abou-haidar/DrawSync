@@ -19,7 +19,6 @@ export const Board = ({ username }: BoardProps) => {
   const [selectedBrushSize, setSelectedBrushSize] = useState(1);
 
   const { lastJsonMessage, sendJsonMessage } = useWebSocket(SOCKET_URL, {
-    queryParams: { username },
     share: true,
   });
 

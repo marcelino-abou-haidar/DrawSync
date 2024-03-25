@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { ChangeEvent, SetStateAction } from 'react';
-import { PiTrashBold } from 'react-icons/pi';
+import { PiClipboardBold, PiTrashBold } from 'react-icons/pi';
+import { useLocation } from 'react-router';
 
 type color = {
   name: string;
@@ -26,6 +27,7 @@ export const CanvasConfig = ({
   clearCanvas,
   className,
 }: CanvasConfigProps) => {
+  const location = useLocation();
   const onChangeColor = (color: string) => {
     if (!color) {
       return;
@@ -40,6 +42,11 @@ export const CanvasConfig = ({
     }
 
     changeBrushSize(+event.target.value);
+  };
+
+  const shareRoom = () => {
+    const roomId = location.pathname.replace(/^\/room\//, '');
+    navigator.clipboard.writeText(roomId);
   };
 
   return (
@@ -94,15 +101,27 @@ export const CanvasConfig = ({
           <h3 className=' -mb--space-3xs -text--step--1 font-semibold'>
             Actions
           </h3>
-          <button
-            data-tooltip-id='tooltip'
-            data-tooltip-content={'Clear canvas'}
-            data-tooltip-place='top'
-            onClick={clearCanvas}
-            className='group flex min-w-12 max-w-20 items-center justify-center rounded-lg border-2 border-gray-100 bg-white px-4 py-2 text-black hover:bg-blue-500'
-          >
-            <PiTrashBold className=' group-hover:fill-white' />
-          </button>
+          <div className='flex flex-wrap gap-1'>
+            <button
+              data-tooltip-id='tooltip'
+              data-tooltip-content={'Clear canvas'}
+              data-tooltip-place='top'
+              onClick={clearCanvas}
+              className='group flex min-w-12 max-w-20 items-center justify-center rounded-lg border-2 border-gray-100 bg-white px-4 py-2 text-black hover:bg-blue-500 active:bg-blue-700'
+            >
+              <PiTrashBold className=' group-hover:fill-white' />
+            </button>
+
+            <button
+              data-tooltip-id='tooltip'
+              data-tooltip-content={'Copy room ID'}
+              data-tooltip-place='top'
+              onClick={shareRoom}
+              className='group flex min-w-12 max-w-20 items-center justify-center rounded-lg border-2 border-gray-100 bg-white px-4 py-2 text-black hover:bg-blue-500 active:bg-blue-700'
+            >
+              <PiClipboardBold className=' group-hover:fill-white' />
+            </button>
+          </div>
         </div>
       </div>
     </div>
