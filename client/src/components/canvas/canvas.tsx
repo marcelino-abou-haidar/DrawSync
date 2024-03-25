@@ -276,7 +276,7 @@ export const Canvas = ({
         ref={canvasRef}
         width={500}
         height={500}
-        className={clsx('aspect-auto h-full w-full shrink bg-white', className)}
+        className={clsx('aspect-auto shrink bg-white', className)}
       ></canvas>
     </>
   );

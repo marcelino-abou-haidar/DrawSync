@@ -36,20 +36,26 @@ export const Users = ({ username, className }: ActiveUsersProps) => {
   return (
     <div
       className={clsx(
-        ' min-w-[140] rounded-b-lg bg-gray-300 -p--space-s md:rounded-bl-lg md:rounded-br-none  md:rounded-tl-lg lg:min-w-60 lg:max-w-80',
+        ' min-w-[140] rounded-b-lg border-t-2 border-gray-200 bg-[#fcfcfc] md:rounded-bl-lg md:rounded-br-none md:rounded-tl-lg md:border-r-2  md:border-t-0 lg:min-w-60 lg:max-w-80',
         className
       )}
     >
-      <h2 className='-mb--space-3xs -text--step--1 font-bold tracking-widest'>
+      <h2 className='-mb--space-3xs max-h-[10%] -p--space-s -text--step--1 font-bold tracking-widest'>
         Connected users
       </h2>
-      <div className='flex gap-4 overflow-x-auto -py--space-2xs md:flex-col'>
+      <div className='flex max-h-[40%] flex-1 gap-1 overflow-x-auto md:flex-col'>
         {Object.keys(usersList).length > 0
-          ? Object?.keys(usersList)?.map((uuid) => {
+          ? Object?.keys(usersList)?.map((uuid, index) => {
               const { username } = usersList[uuid];
 
               return (
-                <div className='flex items-center gap-2' key={uuid}>
+                <div
+                  className={clsx(
+                    'flex items-center gap-2 -p--space-2xs',
+                    index % 2 === 0 ? 'bg-[#f4f4f4]' : ''
+                  )}
+                  key={uuid}
+                >
                   <div
                     data-tooltip-id='tooltip'
                     data-tooltip-content={username}
