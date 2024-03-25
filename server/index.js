@@ -1,24 +1,14 @@
-const { WebSocketServer } = require('ws');
+const { WebSocketServer, WebSocket } = require('ws');
 const http = require('http');
 const url = require('url');
 const { v4: uuidv4 } = require('uuid');
-
+const { EVENT_TYPES } = require('./utils/constants');
 const PORT = 3000;
 const server = http.createServer();
 const ws = new WebSocketServer({ server });
 
 const connections = {};
 const users = {};
-
-const EVENT_TYPES = {
-  ALERT_EVENT: 'alert-event',
-  CANVAS_DRAW: 'canvas-draw',
-  CANVAS_CLEAR: 'canvas-clear',
-  USER_EVENT: 'user-event',
-  USER_CONNECTED: 'user-connected',
-  USER_DISCONNECTED: 'user-disconnected',
-  USERS_LIST: 'users-list',
-};
 
 server.listen(PORT, () => {
   console.log(`Backend server started..`);
@@ -28,10 +18,11 @@ server.listen(PORT, () => {
 const broadcastMessage = (userId, message, all = false) => {
   Object.keys(connections).map((uuid) => {
     const connection = connections[uuid];
+    const isConnected = connection.readyState === WebSocket.OPEN;
 
-    if (!all && uuid !== userId) {
+    if (!all && uuid !== userId && isConnected) {
       connection.send(message);
-    } else if (all) {
+    } else if (all && isConnected) {
       connection.send(message);
     }
   });
@@ -71,6 +62,11 @@ const broadCastCanvasClear = (userId) => {
   broadcastMessage(userId, message);
 };
 
+const broadCastUserPaintingStatus = (userId, message) => {
+  users[userId].isPainting = message.data.isPainting;
+  broadCastConnectedUsers(userId);
+};
+
 const onClose = (userId) => {
   console.log(`User ${users[userId].username} has disconnected.`);
   broadcastUserDisconnection(userId);
@@ -92,6 +88,10 @@ const onMessage = (userId, message) => {
       break;
     case EVENT_TYPES.CANVAS_CLEAR:
       broadCastCanvasClear(userId);
+      break;
+    case EVENT_TYPES.USER_PAINTING:
+      broadCastUserPaintingStatus(userId, convertedMessage);
+      break;
     default:
       console.log(`Unknown event type received.`);
   }
@@ -101,7 +101,7 @@ ws.on('connection', (connection, request) => {
   const userId = uuidv4();
   const { username } = url.parse(request.url, true).query;
   connections[userId] = connection;
-  users[userId] = { username, isDrawing: false };
+  users[userId] = { username, isPainting: false };
 
   console.log(
     `A new WebSocket connection has been established for user ${username}`

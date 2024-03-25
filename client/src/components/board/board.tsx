@@ -55,7 +55,7 @@ export const Board = ({ username }: BoardProps) => {
   return (
     <Container>
       <Header />
-      <Container className='!-mx--space-l flex min-h-fit flex-col justify-center -pb--space-xl md:flex-row'>
+      <Container className='!-mx--space-l flex min-h-fit flex-col justify-center -pb--space-xl md:max-h-[900px] md:flex-row'>
         <Users username={username} className='order-3 md:order-1' />
         <Canvas
           username={username}

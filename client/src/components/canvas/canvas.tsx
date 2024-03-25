@@ -138,11 +138,26 @@ export const Canvas = ({
     const currentCoordinates = getCursorCoordinates(event);
     setIsPainting(true);
     setCurrentCursorCoord(currentCoordinates);
+
+    sendJsonMessage({
+      type: WEBSOCKET_EVENTS.USER_PAINTING,
+      data: {
+        isPainting: true,
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopPainting = useCallback(() => {
     setIsPainting(false);
+    sendJsonMessage({
+      type: WEBSOCKET_EVENTS.USER_PAINTING,
+      data: {
+        isPainting: false,
+      },
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onMouseEnter = useCallback((size: number, color: string) => {
@@ -276,7 +291,7 @@ export const Canvas = ({
         ref={canvasRef}
         width={500}
         height={500}
-        className={clsx('aspect-auto shrink bg-white', className)}
+        className={clsx('aspect-auto w-full shrink bg-white', className)}
       ></canvas>
     </>
   );

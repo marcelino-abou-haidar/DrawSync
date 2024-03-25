@@ -5,9 +5,10 @@ export const WEBSOCKET_EVENTS = {
   CANVAS_DRAW: 'canvas-draw',
   CANVAS_CLEAR: 'canvas-clear',
   USER_EVENT: 'user-event',
+  USERS_LIST: 'users-list',
+  USER_PAINTING: 'user-painting',
   USER_CONNECTED: 'user-connected',
   USER_DISCONNECTED: 'user-disconnected',
-  USERS_LIST: 'users-list',
 };
 
 export const COLORS = [

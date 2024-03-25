@@ -45,7 +45,7 @@ export const CanvasConfig = ({
   return (
     <div
       className={clsx(
-        'w-full min-w-32 overflow-auto rounded-t-lg border-b-2 border-l-2 border-gray-100 bg-[#fcfcfc]  -p--space-s md:max-w-80 md:rounded-r-lg md:rounded-tl-none lg:min-w-60',
+        'w-full min-w-32 overflow-auto rounded-t-lg border-b-2 border-l-2 border-gray-100 bg-[#fcfcfc] -p--space-s  md:max-w-80 md:rounded-r-lg md:rounded-tl-none lg:min-w-60 lg:max-w-80',
         className
       )}
     >
