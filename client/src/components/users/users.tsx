@@ -6,7 +6,6 @@ import { PiPencilSimpleLight } from 'react-icons/pi';
 import useWebSocket from 'react-use-websocket';
 import { SOCKET_URL, WEBSOCKET_EVENTS } from 'src/utils/constants';
 interface ActiveUsersProps {
-  username: string;
   className?: string;
 }
 
@@ -49,36 +48,40 @@ export const Users = ({ className }: ActiveUsersProps) => {
           fallback={<div>There was an error fetching active users.</div>}
         >
           <div className='flex max-h-[92%] flex-1 gap-1 overflow-x-auto md:flex-col'>
-            {Object.keys(usersList).length > 0
-              ? Object?.keys(usersList)?.map((uuid, index) => {
-                  const { username, isPainting } = usersList[uuid];
-                  return (
+            {Object.keys(usersList).length > 0 ? (
+              Object?.keys(usersList)?.map((uuid, index) => {
+                const { username, isPainting } = usersList[uuid];
+                return (
+                  <div
+                    className={clsx(
+                      'flex items-center gap-2 -p--space-2xs -px--space-s',
+                      index % 2 === 0 ? 'bg-[#f4f4f4]' : ''
+                    )}
+                    key={uuid}
+                  >
                     <div
-                      className={clsx(
-                        'flex items-center gap-2 -p--space-2xs -px--space-s',
-                        index % 2 === 0 ? 'bg-[#f4f4f4]' : ''
-                      )}
-                      key={uuid}
+                      data-tooltip-id='tooltip'
+                      data-tooltip-content={username}
+                      data-tooltip-place='top'
                     >
-                      <div
-                        data-tooltip-id='tooltip'
-                        data-tooltip-content={username}
-                        data-tooltip-place='top'
-                      >
-                        <Avvvatars
-                          border={true}
-                          borderColor='darkgray'
-                          value={username}
-                        />
-                      </div>
-                      <p className='-text--step--2'>{username}</p>
-                      <div className='h-4 w-4'>
-                        {isPainting ? <PiPencilSimpleLight /> : null}
-                      </div>
+                      <Avvvatars
+                        border={true}
+                        borderColor='darkgray'
+                        value={username}
+                      />
                     </div>
-                  );
-                })
-              : null}
+                    <p className='-text--step--2'>{username}</p>
+                    <div className='h-4 w-4'>
+                      {isPainting ? <PiPencilSimpleLight /> : null}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className='-p--space-2xs -px--space-s'>
+                <h3 className=' -text--step--2'>No users to show</h3>
+              </div>
+            )}
           </div>
         </ErrorBoundary>
       </div>

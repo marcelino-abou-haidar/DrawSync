@@ -52,6 +52,7 @@ export const CreateRoom = () => {
         );
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastJsonMessage, navigate]);
 
   return (

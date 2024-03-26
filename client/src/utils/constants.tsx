@@ -35,6 +35,7 @@ export const COLORS = [
   { name: 'peru', hex: '#CD853F', darkerHex: '#8B4513' },
   { name: 'darkolivegreen', hex: '#556B2F', darkerHex: '#364C21' },
   { name: 'coral', hex: '#FF7F50', darkerHex: '#CD5B45' },
+  { name: 'white', hex: '#FFFFFF', darkerHexX: '#808080' },
 ];
 
 export const BRUSH_SIZES = [2, 4, 6, 8, 10, 12, 14, 16, 18];

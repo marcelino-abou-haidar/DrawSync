@@ -27,7 +27,6 @@ type CanvasDraw = {
 };
 
 interface CanvasProps {
-  username: string;
   brushColor: string;
   brushSize: number;
   canvasRef: MutableRefObject<HTMLCanvasElement | null>;
@@ -35,7 +34,6 @@ interface CanvasProps {
 }
 
 export const Canvas = ({
-  username,
   brushColor,
   brushSize,
   canvasRef,
@@ -175,6 +173,11 @@ export const Canvas = ({
     cursorPointer.style.pointerEvents = `none`;
     cursorPointer.style.backgroundColor = color;
     cursorPointer.style.borderRadius = `50%`;
+    if (color === 'white') {
+      cursorPointer.style.border = `1px solid black`;
+    } else {
+      cursorPointer.style.border = `none`;
+    }
   }, []);
 
   const onMouseLeave = () => {
@@ -245,6 +248,7 @@ export const Canvas = ({
         onMouseEnter(brushSize, brushColor);
       });
       canvas.removeEventListener('mouseleave', onMouseLeave);
+      document.body.style.cursor = 'default';
     };
   }, [brushColor, brushSize, canvasRef, onMouseEnter]);
 

@@ -89,6 +89,10 @@ const broadCastCanvasClear = (userId, message) => {
 };
 
 const broadCastUserPaintingStatus = (userId, message) => {
+  if (!users[userId]) {
+    return;
+  }
+
   const { roomId } = users[userId];
 
   if (!roomId || !rooms[roomId]) {
@@ -152,7 +156,7 @@ const handleCreateRoom = (userId, { message }) => {
   const messageToSend = JSON.stringify({
     type: EVENT_TYPES.ROOM_CREATED,
     message: {
-      roomId: roomId,
+      roomId,
     },
   });
 
@@ -160,7 +164,7 @@ const handleCreateRoom = (userId, { message }) => {
 
   setTimeout(() => {
     broadCastConnectedUsers(roomId);
-  }, 0);
+  }, 500);
 };
 
 const handleRoomJoin = (userId, { message }) => {

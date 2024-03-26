@@ -1,5 +1,4 @@
-import { SetStateAction, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useWebSocket from 'react-use-websocket';
 import { ROUTES } from 'src/routes/constants';
