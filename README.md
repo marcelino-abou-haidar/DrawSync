@@ -21,6 +21,8 @@ The main goal of this project is to create a real-time application that enables 
 - Users can clear the canvas.
 
 - Users can copy room ID to be shared.
+
+- Users will have the ability to identify the user currently drawing by viewing a pencil icon next to their username.
   
   
 
@@ -135,11 +137,15 @@ The main goal of this project is to create a real-time application that enables 
 4. **Join a Room:**
    
    * Open a different browser tab or window.
+   
    * Visit the frontend app.
+   
    * Navigate to the join room page.
    
    * Provide a user name.
+   
    * Enter the Room ID obtained from the host.
+   
    * Join the room
 
 5. **Start Drawing:**
