@@ -116,6 +116,8 @@ The main goal of this project is to create a real-time application that enables 
 - Responsive dynamic fonts sizes and spacing values utilizng Utopia's CSS clamps generator.
 
 - Responsive clean UI design.
+
+- A custom cursor is implemented to help users visualize the size and color of the brush they are painting with.
   
   
 
@@ -151,4 +153,3 @@ The main goal of this project is to create a real-time application that enables 
 5. **Start Drawing:**
    
    * Once joined, start drawing on the canvas to see real-time changes!
-   * 
