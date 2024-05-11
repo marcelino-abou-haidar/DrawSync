@@ -4,26 +4,34 @@
 
 The main goal of this project is to create a real-time application that enables users to draw together on an HTML5 canvas.
 
-
-
 ### High Level Functionality
 
 - Users have the ability to create separate private rooms for collaboration.
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/22554453-180e-4354-9316-b1cb393171dc)
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/62fb5d77-c641-4476-b251-d2465ff96849)
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/7ba47fff-0f2b-416c-8b61-269112e33f4b)
 
 - A user can join a room by entering their name and the room ID shared by the creator.
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/4f96b77e-edc7-45ff-a4b7-428a60f0127b)
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/36f6e9ba-10bc-4aa9-827a-5e6a54b9ac01)
 
 - Users have the ability to draw on a canvas.
+  ![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/85d738d6-0d66-4efb-b260-dfd594da1a3b)
 
 - Users can select different colors for drawing on the canvas.
+  
+  ![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/25138690-dcda-4b58-b4d4-f68764866bda)
 
 - Users can change brush size.
+
+  ![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/ebaa4ebf-ee4a-45d1-822d-33abf214b914)
 
 - Users can clear the canvas.
 
 - Users can copy room ID to be shared.
 
 - Users will have the ability to identify the user currently drawing by viewing a pencil icon next to their username.
-  
+![image](https://github.com/marcelino-abou-haidar/anexya-drawsync/assets/54931609/bdc57a73-a3b2-4f31-829c-8fdd98c4e1db)
   
 
 ### Tech Stack
